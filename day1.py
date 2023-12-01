@@ -1,10 +1,6 @@
+from helpers import read_file_str
 FILE_NAME = 'inputs/day1.txt'
 
-
-def read_file_str(file_name):
-    with open(file_name, 'r') as f:
-        lines = f.readlines()
-    return lines
 
 def day1_p1(lines):
     tmp = ""

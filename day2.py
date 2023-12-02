@@ -1,4 +1,5 @@
 from helpers import read_file_str, INPUTS_PATH, DEMO_PATH, download_input
+import re
 
 IS_PROD = True
 DAY = 2
@@ -6,38 +7,28 @@ DAY = 2
 LIMITS = {"red": 12, "green": 13, "blue": 14}
 
 
-def parse_round_input(str_input):
-    parsed_game = []
-    input = str_input.split(":")[1].strip().split(";")
-    input = [val.split(",") for val in input]
-    for i in range(0, len(input)):
-        round_val = []
-        for j in range(0, len(input[i])):
-            game_input = input[i][j].strip().split(" ")
-            tmp_val = (game_input[1], game_input[0])
-            round_val.append(tmp_val)
-        parsed_game.append(round_val)
-    return parsed_game
+def prep(input):
+    inp = [val.strip() for val in re.split(r":|,|;", input)]
+    inp.pop(0)
+    return inp
 
 
-def validate_p1(round_val):
-    possible_round = 1
-    for _, round_to_validate in enumerate(round_val):
-        for _, detail_to_validate in enumerate(round_to_validate):
-            if LIMITS[detail_to_validate[0]] < int(detail_to_validate[1]):
-                possible_round = 0
-    return possible_round
+def part1(input):
+    for round in input:
+        num, color = round.split(" ")
+        if int(num) > LIMITS[color]:
+            return 0
+    return 1
 
 
 def part2(game_val):
-    min_cubes = {}
-    for _, round in enumerate(game_val):
-        for _, cube in enumerate(round):
-            print(min_cubes.get(cube[0], 0), int(cube[1]))
-            if min_cubes.get(cube[0], 0) < int(cube[1]):
-                min_cubes[cube[0]] = int(cube[1])
+    min_vals = {}
+    for fig in game_val:
+        num, color = fig.split(" ")
+        if min_vals.get(color, 0) < int(num):
+            min_vals[color] = int(num)
     result = 1
-    for val in min_cubes.values():
+    for val in min_vals.values():
         result = result * val
     return result
 
@@ -55,10 +46,8 @@ if __name__ == "__main__":
     idx_sum = 0
     part2_sum = 0
     for idx, line in enumerate(lines):
-        parsed = parse_round_input(line)
-        valid_game = validate_p1(parsed)
-        if valid_game:
-            idx_sum += idx + 1
+        parsed = prep(line)
+        idx_sum += part1(parsed) * (idx + 1)
         part2_sum += part2(parsed)
 
     print(idx_sum)

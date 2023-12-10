@@ -4,7 +4,7 @@ import sys
 sys.setrecursionlimit(100000)
 
 DAY = 10
-IS_PROD = True
+IS_PROD = False
 
 file_name = DEMO_PATH.format(str(DAY)) if not IS_PROD else INPUTS_PATH.format(str(DAY))
 
@@ -115,4 +115,59 @@ for i in range(0, bounds_y):
 
 
 print(m - 1)
-pretty_map_print(map_ints)
+
+
+with open("day_10_outp.txt", "w+") as f:
+    for line in map_ints:
+        f.write(" ".join([str(chr) for chr in line]) + "\n")
+
+
+with open("/Users/tomaspeluritis/aoc_2023/day_10_outp.txt", "r") as f:
+    lines = f.readlines()
+lines = [line.replace("\n", "").split(" ") for line in lines]
+
+fixed_lines = []
+for line in lines:
+    cur_line = []
+    for char in line:
+        cur_line.append(9 if char != "0" else 0)
+    fixed_lines.append(cur_line)
+bounds_y = len(fixed_lines)
+bounds_x = len(fixed_lines[0])
+
+for idy in range(0, bounds_y):
+    if fixed_lines[idy][0] == 0:
+        fixed_lines[idy][0] = "#"
+    if fixed_lines[idy][bounds_x - 1] == 0:
+        fixed_lines[idy][bounds_x - 1] = "#"
+
+for idx in range(0, bounds_x):
+    if fixed_lines[0][idx] == 0:
+        fixed_lines[0][idx] = "#"
+    if fixed_lines[bounds_y - 1][idx] == 0:
+        fixed_lines[bounds_y - 1][idx] = "#"
+
+neighbours_coords_only = list(neighbours.keys())
+cur_map = fixed_lines.copy()
+cond = True
+while cond:
+    cnt = 0
+    for idy in range(1, bounds_y - 1):
+        for idx in range(1, bounds_x - 1):
+            if cur_map[idy][idx] not in ("#", 9) and any(
+                [
+                    cur_map[idy + neigh[1]][idx + neigh[0]] == "#"
+                    for neigh in neighbours_coords_only
+                ]
+            ):
+                cur_map[idy][idx] = "#"
+                cnt += 1
+    if cnt == 0:
+        cond = False
+
+
+ttl_cnt = 0
+for idy in range(0, bounds_y):
+    for idx in range(0, bounds_x):
+        ttl_cnt += 1 if cur_map[idy][idx] == 0 else 0
+print(ttl_cnt)

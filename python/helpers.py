@@ -2,8 +2,8 @@ import requests
 from dotenv import load_dotenv
 import os
 
-INPUTS_PATH = "inputs/day{}.txt"
-DEMO_PATH = "inputs/day{}_demo.txt"
+INPUTS_PATH = "../inputs/day{}.txt"
+DEMO_PATH = "../inputs/day{}_demo.txt"
 
 
 def read_file_str(file_name: str) -> list[str]:
@@ -29,5 +29,5 @@ def download_input(day: str) -> None:
     load_dotenv()
     url = f"https://adventofcode.com/2023/day/{day}/input"
     input = requests.get(url, cookies={"session": os.getenv("AOC_TOKEN")}).text
-    with open(f"inputs/day{day}.txt", "w") as f:
+    with open(f"../inputs/day{day}.txt", "w") as f:
         f.write(input)
